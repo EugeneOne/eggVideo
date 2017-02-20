@@ -155,10 +155,10 @@
                 <!-- 进度条 -->
                 <div class="contrl-progress-line-outer">
                     <div class="contrl-video-rail">
-                        <div class="contrl-video-pre-rail" :style="{width:video.pos.current+'px'}"></div>
+                        <div class="contrl-video-pre-rail" :style="{width:video.contrlLeft+'px'}"></div>
                         <div class="contrl-video-download-rail"></div>
                     </div>
-                    <div class="contrl-video-circle" @click="videoSlider" @mousedown="videoMove" :style="{ 'transform': `translate3d(${video.pos.current}px, 0, 0)`}"></div>
+                    <div class="contrl-video-circle" @click="videoSlider" @mousedown="videoMove" :style="{ 'transform': `translate3d(${video.contrlLeft}px, 0, 0)`}"></div>
                 </div>
                 <div class="contrl-menu">
                     <!-- 播放按钮 -->
@@ -261,7 +261,8 @@
                         width: 0,
                         innerWidth: 0,
                         current: 0
-                    }
+                    },
+                    contrlLeft: 0
                 },
                 vol: {
                     moving: false,
@@ -346,11 +347,14 @@
             },
             timeline () {
                 const percent = this.$video.currentTime / this.$video.duration;
-                const x = getMousePosition() - this.video.pos.start;
-                if(x > 0 && x < this.video.pos.innerWidth - 8) {
-                    this.video.pos.current = (this.video.pos.innerWidth * percent).toFixed(3)
+                const x = this.video.pos.current;
+                if(x >= 0 && x < this.video.pos.innerWidth - 16) {
+                    this.video.pos.current = (this.video.pos.innerWidth * percent).toFixed(3);
+                    this.video.contrlLeft = this.video.pos.current
                 } else {
-                    self.video.pos.current = self.video.pos.innerWidth - 8;
+                    // this.video.pos.current = this.video.pos.innerWidth - 16;
+                    this.video.pos.current = (this.video.pos.innerWidth * percent).toFixed(3);
+                    this.video.contrlLeft = this.video.pos.innerWidth-16;
                 }
                 this.video.displayTime = timeParse(this.$video.currentTime)
             },
@@ -371,6 +375,13 @@
             videoSlider(e) {
                 let self = this;
                 const x = getMousePosition(e) - this.video.pos.start;
+                if(x < 8) {
+                    self.video.contrlLeft = 0;
+                }else if(x > self.video.pos.innerWidth - 8){
+                    self.video.contrlLeft = self.video.pos.innerWidth - 16;
+                }else {
+                    self.video.contrlLeft = self.video.pos.current;
+                }
                 if (x > 0 && x < this.video.pos.innerWidth - 8) {
                     self.video.pos.current = x - 8;
                     self.setVideoByTime((x - 8) / self.video.pos.innerWidth)
