@@ -1,7 +1,8 @@
 <style>
 .__cov-video-container {
     position: relative;
-    width: 100%;
+    height: 539px;
+    width: 960px;
     background-color: #000;
 }
 

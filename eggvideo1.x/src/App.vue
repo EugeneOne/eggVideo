@@ -2,7 +2,7 @@
     <div id="app">
         <h1>{{ msg }}</h1>
         <div class="container">
-          <!-- <my-video :sources="video.sources" :options="video.options"></my-video> -->
+          <my-video id="myvideo" :sources="video.sources" :options="video.options"></my-video>
           <egg-video :parameter="eggvideo.parameter" :sources="eggvideo.sources"></egg-video>
       </div>
     </div>
@@ -66,5 +66,9 @@
     }
     .f-r{
         float: right;
+    }
+    #myvideo{
+        height: 539px;
+        width: 960px;
     }
 </style>

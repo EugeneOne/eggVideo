@@ -59,6 +59,10 @@
                         height: 4px;
                         background: #FFE100;
                     }
+                    .contrl-video-download-rail{
+                        height: 4px;
+                        background: #777;
+                    }
                 }
             }
             .contrl-menu {
@@ -131,6 +135,7 @@
                     height: 16px;
                     width: 16px;
                     margin-top: 4px;
+                    cursor: pointer;
                     img {
                         display: block;
                         height: 100%;
@@ -146,6 +151,7 @@
         <div class="video-container" :style="{height:parameter.height+'px' , width:parameter.width+'px'}" @mouseenter="mouseEnterVideo" @mouseleave="mouseLeaveVideo">
             <div id="contrl-background" @click="play">
                 <img v-show="!state.playing" src="../img/bg-play.png" alt="" />
+                <img v-show="state.waiting" src="../img/loading.gif" alt="" />
             </div>
             <video id="egg-video" :poster="options.poster">
                 <source v-for="source in sources" :src="source.src" :type="source.type">
@@ -153,12 +159,12 @@
             </video>
             <div id="bottom-contrl" v-show="state.showContrl">
                 <!-- 进度条 -->
-                <div class="contrl-progress-line-outer">
+                <div class="contrl-progress-line-outer" @click="videoSlider">
                     <div class="contrl-video-rail">
                         <div class="contrl-video-pre-rail" :style="{width:video.contrlLeft+'px'}"></div>
-                        <div class="contrl-video-download-rail"></div>
+                        <div class="contrl-video-download-rail" :style="{width:video.loaded+'px'}"></div>
                     </div>
-                    <div class="contrl-video-circle" @click="videoSlider" @mousedown="videoMove" :style="{ 'transform': `translate3d(${video.contrlLeft}px, 0, 0)`}"></div>
+                    <div class="contrl-video-circle" @mousedown="videoMove" :style="{ 'transform': `translate3d(${video.contrlLeft}px, 0, 0)`}"></div>
                 </div>
                 <div class="contrl-menu">
                     <!-- 播放按钮 -->
@@ -175,12 +181,14 @@
                     <!-- 音量 -->
                     <div class="contrl-vol-outer f-r">
                         <div class="contrl-vol-line"></div>
-                        <div class="contrl-vol-pre-line" :style="{width: vol.pos.current+'px'}"></div>
-                        <div class="contrl-vol-circle" @click="clickVol" @mousedown="volMove" :style="{ 'transform': `translate3d(${vol.pos.current}px, 0, 0)`}"></div>
+                        <div class="contrl-vol-pre-line" :style="{width: vol.contrlLeft+'px'}"></div>
+                        <div class="contrl-vol-circle" @mousedown="volMove" :style="{ 'transform': `translate3d(${vol.contrlLeft}px, 0, 0)`}"></div>
                     </div>
                     <!-- 音量icon -->
-                    <div class="contrl-vol-icon f-r">
-                        <img src="../img/voice_low.png" alt="">
+                    <div class="contrl-vol-icon f-r" @click="mutedVol">
+                        <img v-if="vol.muted == 1" src="../img/voice_low.png" alt="">
+                        <img v-if="vol.muted == 2" src="../img/voice_high.png" alt="">
+                        <img v-if="!vol.muted" src="../img/voice_no.png" alt="">
                     </div>
                 </div>
 
@@ -241,6 +249,7 @@
                 $volRail: null,
                 state: {
                     playing: false,
+                    waiting: false,
                     currentTime: "00:00",
                     durationTime: "00:00",
                     durationStr: null,
@@ -266,12 +275,14 @@
                 },
                 vol: {
                     moving: false,
+                    muted: true,
                     pos: {
                         innerWidth: 0,
                         current: 0,
                         start: 0,
                         width: 0,
-                    }
+                    },
+                    contrlLeft: 0
                 }
             }
         },
@@ -300,8 +311,8 @@
                 this.initVol()
                 this.initVideo()
                 this.initPlayer()
-                // const vol = this.options.volume || 0.9
-                // this.setVol(vol)
+                const vol = this.options.volume || 0.9
+                this.setVol(vol)
             },
             //初始化播放器
             initPlayer () {
@@ -316,7 +327,7 @@
                 const $videoDown = $videoRail.getElementsByClassName('contrl-video-download-rail')[0]
                 this.$videoRail = $videoRail;
                 this.video.pos.start = $videoRail.getBoundingClientRect().left;
-                this.video.pos.innerWidth = $videoDown.getBoundingClientRect().width;
+                this.video.pos.innerWidth = self.$video.getBoundingClientRect().width;
                 this.video.pos.width = $videoRail.getBoundingClientRect().width - this.video.pos.innerWidth;
                 self.getTime();
             },
@@ -334,12 +345,18 @@
                     if (this.state.playing) {
                         this.$video.play()
                         this.mouseLeaveVideo()
-                        this.$video.addEventListener('timeupdate', this.timeline)
+                        this.$video.addEventListener('timeupdate', this.timeline);
+                        this.$video.addEventListener('waiting', (e) => {
+                            this.state.waiting = true;
+                        });
+                        this.$video.addEventListener('playing', (e) => {
+                            this.state.waiting = false;
+                        });
                         this.$video.addEventListener('ended', (e) => {
                             this.state.playing = false
                             this.video.pos.current = 0
                             this.$video.currentTime = 0
-                        })
+                        });
                     } else {
                         this.$video.pause()
                     }
@@ -358,6 +375,10 @@
                 }
                 this.video.displayTime = timeParse(this.$video.currentTime)
             },
+            videoMove (e) {
+                this.initVideo()
+                this.video.moving = true
+            },
             mouseMoveAction(e) {
                 if (this.video.moving) {
                     this.videoSlider(e)
@@ -365,12 +386,6 @@
             },
             mouseUpAction(){
                 this.video.moving = false;
-            },
-            mouseMoveVol(e){
-                this.volSlider(e)
-            },
-            mouseUpVol(){
-                this.vol.moving = false;
             },
             videoSlider(e) {
                 let self = this;
@@ -390,37 +405,51 @@
                     self.setVideoByTime((x) / self.video.pos.innerWidth)
                 }
             },
-            clickVol() {
-                // console.log("click");
-                // this.vol.moving = true;
-            },
             volMove() {
                 this.vol.moving = true;
+            },
+            mouseMoveVol(e){
+                if(this.vol.moving){
+                    this.volSlider(e);
+                }
+            },
+            mouseUpVol(){
+                this.vol.moving = false;
             },
             volSlider(e) {
                 let self = this;
                 if(self.vol.moving) {
                     const x = getMousePosition(e) - this.vol.pos.start;
-                    if (x > 6 && x < self.vol.pos.innerWidth) {
-                        self.vol.pos.current = x - 6;
-                        // self.setVol(x / self.vol.pos.innerWidth)
+                    if (x > 0 && x < self.vol.pos.innerWidth) {
+                        self.vol.pos.current = x;
+                        self.setVol(x / self.vol.pos.innerWidth);
+                        self.vol.contrlLeft = self.vol.pos.current - 6;
                     }
                 }
+            },
+            //设置静音
+            mutedVol(){
+                this.$video.muted = !this.$video.muted
+                this.vol.muted = !this.$video.muted
             },
             setVol(val) {
                 let self = this;
                 if (self.$video) {
-                    self.vol.pos.current = val * self.vol.pos.width
+                    self.vol.pos.current = val * self.vol.pos.innerWidth;
+                    self.vol.contrlLeft = self.vol.pos.current - 6;
                     self.vol.percent = val * 100
                     self.$video.volume = val
+                }
+                if(self.vol.percent > 50){
+                    self.vol.muted = 2;
+                }else if(self.vol.percent > 0){
+                    self.vol.muted = 1;
+                }else {
+                    self.vol.muted = 0;
                 }
             },
             setVideoByTime (percent) {
                 this.$video.currentTime = Math.floor(percent * this.state.durationStr)
-            },
-            videoMove (e) {
-                this.initVideo()
-                this.video.moving = true
             },
             getTime (){
                 let self = this;
@@ -433,7 +462,11 @@
                     self.state.currentTime = timeParse(self.$video.currentTime);
                 })
                 // 下载事件
-                self.$video.addEventListener("progress",(e) => {
+                self.$video.addEventListener('timeupdate', (e) => {
+                    if(self.$video.buffered.length>0){
+                        self.video.loaded = (-1 + (self.$video.buffered.end(0) / self.$video.duration)) * 100
+                    }
+
                 })
             },
             //鼠标移入video
@@ -449,7 +482,8 @@
             // //鼠标移出video
             mouseLeaveVideo: function() {
                 let self = this;
-                self.video.moving = false
+                self.video.moving = false;
+                self.vol.moving = false;
                 // if (self.tmp.contrlHideTimer) {
                 //     clearTimeout(self.tmp.contrlHideTimer);
                 // }
