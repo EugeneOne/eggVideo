@@ -1,16 +1,14 @@
-var path = require('path');
 var webpack = require('webpack');
 var WebpackDevServer = require("webpack-dev-server");
+var HtmlWebpackPlugin = require("html-webpack-plugin");
 
 module.exports = {
-    entry: './src/main.js',
+    entry: './src/main',
     output: {
-        path: path.resolve(__dirname, './dist'),
+        path: "dist",
         publicPath: '/dist/',
-        filename: 'build.js'
-    },
-    resolveLoader: {
-        root: path.join(__dirname, 'node_modules'),
+        filename: 'build.js',
+        chunkFilename: "[id].[name].[chunkHash].js"
     },
     module: {
         loaders: [{
@@ -45,6 +43,14 @@ module.exports = {
         historyApiFallback: true,
         noInfo: true
     },
+    plugins:[
+         new HtmlWebpackPlugin({           //根据模板插入css/js等生成最终HTML
+             filename:'../index.html',    //生成的html存放路径，相对于 path
+             template:'./src/components/index.html',    //html模板路径
+             inject:true,    //允许插件修改哪些内容，包括head与body
+             hash:true,    //为静态资源生成hash值
+        })
+    ],
     devtool: '#eval-source-map'
 }
 

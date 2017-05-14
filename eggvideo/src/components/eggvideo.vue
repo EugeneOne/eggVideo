@@ -1,7 +1,7 @@
 <style lang="sass">
     .video-container {
         position: relative;
-        background: rgba(0, 0, 0, .2);
+        background: #333;
         overflow: hidden;
         #contrl-background {
             position: absolute;
@@ -10,7 +10,11 @@
             width: 100%;
             height: 200px;
             z-index: 10000000000;
-            img {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            .icon60 {
                 display: block;
                 height: 60px;
                 width: 60px;
@@ -20,6 +24,14 @@
                 margin-top: -15px;
                 margin-left: -15px;
                 cursor: pointer;
+            }
+            .playIcon100 {
+                height: 100px;
+                width: 100px;
+                top: 50%;
+                left: 50%;
+                margin-top: -35px;
+                margin-left: -35px;
             }
         }
         #egg-video {
@@ -43,13 +55,88 @@
             margin: 0px !important;
             flex: 1 1 0% !important;
         }
+        #egg-video:-moz-full-screen {
+            background-color: transparent;
+            position: relative;
+            left: 0px;
+            top: 0px;
+            min-width: 0px;
+            max-width: none;
+            min-height: 0px;
+            max-height: none;
+            width: 100%;
+            height: 100%;
+            display: block;
+            transform: none;
+            margin: 0px !important;
+            flex: 1 1 0% !important;
+        }
+        #egg-video:-ms-full-screen {
+            background-color: transparent;
+            position: relative;
+            left: 0px;
+            top: 0px;
+            min-width: 0px;
+            max-width: none;
+            min-height: 0px;
+            max-height: none;
+            width: 100%;
+            height: 100%;
+            display: block;
+            transform: none;
+            margin: 0px !important;
+            flex: 1 1 0% !important;
+        }
+        #egg-video:-o-full-screen {
+            background-color: transparent;
+            position: relative;
+            left: 0px;
+            top: 0px;
+            min-width: 0px;
+            max-width: none;
+            min-height: 0px;
+            max-height: none;
+            width: 100%;
+            height: 100%;
+            display: block;
+            transform: none;
+            margin: 0px !important;
+            flex: 1 1 0% !important;
+        }
         ::-webkit-media-controls {
+            display: none !important;
+        }
+        ::-moz-media-controls {
+            display: none !important;
+        }
+        ::-ms-media-controls {
+            display: none !important;
+        }
+        ::-o-media-controls {
             display: none !important;
         }
         video::-webkit-media-controls {
             display: none !important;
         }
+        video::-moz-media-controls {
+            display: none !important;
+        }
+        video::-ms-media-controls {
+            display: none !important;
+        }
+        video::-o-media-controls {
+            display: none !important;
+        }
         video::-webkit-media-controls-enclosure {
+            display: none !important;
+        }
+        video::-moz-media-controls-enclosure {
+            display: none !important;
+        }
+        video::-ms-media-controls-enclosure {
+            display: none !important;
+        }
+        video::-o-media-controls-enclosure {
             display: none !important;
         }
         #bottom-contrl {
@@ -69,6 +156,10 @@
                 transition: all .2s ease-in;
                 .contrl-video-time {
                     position: absolute;
+                    -webkit-user-select: none;
+                    -moz-user-select: none;
+                    -ms-user-select: none;
+                    user-select: none;
                     height: 26px;
                     width: 50px;
                     background: #000;
@@ -78,6 +169,8 @@
                     font-size: 14px;
                     color: #fff;
                     bottom: 16px;
+                    border-radius: 13px;
+                    opacity: .8;
                 }
                 .contrl-video-circle {
                     position: absolute;
@@ -113,6 +206,10 @@
                 bottom: 0;
                 padding: 0 20px;
                 box-sizing: border-box;
+                -webkit-user-select: none;
+                -moz-user-select: none;
+                -ms-user-select: none;
+                user-select: none;
                 .contrl-play-btn {
                     width: 13px;
                     height: 16px;
@@ -143,11 +240,11 @@
                     }
                 }
                 .contrl-full {
-                    height: 24px;
-                    width: 24px;
+                    height: 16px;
+                    width: 16px;
                     opacity: .5;
                     margin-left: 40px;
-                    margin-top: 2px;
+                    margin-top: 4px;
                     cursor: pointer;
                     img {
                         height: 100%;
@@ -188,9 +285,9 @@
                     }
                 }
                 .contrl-vol-icon {
-                    height: 16px;
-                    width: 16px;
-                    margin-top: 4px;
+                    height: 20px;
+                    width: 20px;
+                    margin-top: 3px;
                     cursor: pointer;
                     img {
                         display: block;
@@ -201,15 +298,12 @@
             }
         }
     }
-
     .bottom-fade-enter-active {
         transition: all .5s linear;
     }
-
     .bottom-fade-leave-active {
         transition: all .5s linear;
     }
-
     .bottom-fade-enter,
     .bottom-fade-leave-active {
         transform: translateY(20px);
@@ -218,14 +312,14 @@
 </style>
 <template>
     <div class="container">
-        <div class="video-container" :style="{height:parameter.height+'px' , width:parameter.width+'px'}" @mouseenter="mouseEnterVideo" @mouseleave="mouseLeaveVideo">
+        <div class="video-container" :style="{height:parameter.height+'px' , width:parameter.width+'px'}" @mouseenter="mouseEnterVideo" @mouseleave="mouseLeaveVideo" @mousemove="mouseMoveVideo">
             <video id="egg-video" :poster="options.poster">
                 <source v-for="source in sources" :src="source.src" :type="source.type">
                 </source>
             </video>
             <div id="contrl-background" @click="play">
-                <img v-show="!state.playing" src="../../inc/assets/bg-play.png" alt="" />
-                <img v-show="state.waiting" src="../../inc/assets/loading.gif" alt="" />
+                <img v-show="!state.playing" class="icon60" :class="{playIcon100:state.isFull}" src="../../inc/assets/bg-play.png" alt="" />
+                <img v-show="state.waiting" class="icon60" src="../../inc/assets/loading.gif" alt="" />
             </div>
             <transition name="bottom-fade">
                 <div id="bottom-contrl" v-show="state.showContrl">
@@ -235,8 +329,8 @@
                             <div class="contrl-video-pre-rail" :style="{width:video.contrlLeft+'px'}"></div>
                             <div class="contrl-video-download-rail" :style="{width:video.loaded+'px'}"></div>
                         </div>
-                        <div class="contrl-video-time" :style="{ 'transform': `translate3d(${video.contrlTimeLeft}px, 0, 0)`}">{{state.currentTime}}</div>
-                        <div class="contrl-video-circle" @mousedown="videoMove" :style="{ 'transform': `translate3d(${video.contrlLeft}px, 0, 0)`}"></div>
+                        <div v-if="options.isPage" class="contrl-video-time" :style="{ 'transform': 'translate('+video.contrlTimeLeft+'px, 0)'}">{{currentPage-(-1)}}/{{videoClips.length}}</div>
+                        <div class="contrl-video-circle" @mousedown="videoMove" :style="{ 'transform': 'translate('+video.contrlLeft+'px, 0)'}"></div>
                     </div>
                     <div class="contrl-menu">
                         <!-- 播放按钮 -->
@@ -250,27 +344,27 @@
                             <span>/</span>
                             <span class="cotrl-duration-time">{{state.durationTime}}</span>
                         </div>
-                        <div class="contrl-full f-r" @click="fullVideo">
-                            <img src="../../inc/assets/ic_video_fullscreen_shrink_p.png" alt="">
+                        <div class="contrl-full f-r" @click="fullVideo" v-if="options.isFullScreen">
+                            <img v-if="!state.isFull" src="../../inc/assets/ic_video_preview_fullscreen_p copy.png" alt="">
+                            <img v-if="state.isFull" src="../../inc/assets/ic_video_fullscreen_shrink_p.png" alt="">
                         </div>
                         <!-- 音量 -->
                         <div class="contrl-vol-outer f-r">
                             <div class="contrl-vol-line"></div>
                             <div class="contrl-vol-pre-line" :style="{width: vol.contrlLeft+'px'}"></div>
-                            <div class="contrl-vol-circle" @mousedown="volMove" :style="{ 'transform': `translate3d(${vol.contrlLeft}px, 0, 0)`}"></div>
+                            <div class="contrl-vol-circle" @mousedown="volMove" :style="{ 'transform': 'translate('+vol.contrlLeft+'px, 0)'}"></div>
                         </div>
                         <!-- 音量icon -->
                         <div class="contrl-vol-icon f-r" @click="mutedVol">
-                            <img v-if="vol.muted == 1" src="../../inc/assets/voice_low.png" alt="">
-                            <img v-if="vol.muted == 2" src="../../inc/assets/voice_high.png" alt="">
-                            <img v-if="!vol.muted" src="../../inc/assets/voice_no.png" alt="">
+                            <img v-if="vol.muted == 1" src="../../inc/assets/ic_video_preview_voice_low.png" alt="">
+                            <img v-if="vol.muted == 2" src="../../inc/assets/ic_video_preview_voice_high.png" alt="">
+                            <img v-if="!vol.muted" src="../../inc/assets/ic_video_preview_voice_no.png" alt="">
                         </div>
                     </div>
                 </div>
             </transition>
         </div>
     </div>
-
 </template>
 <script>
     const getMousePosition = function(e, type = 'x') {
@@ -312,10 +406,15 @@
                         volume: 0.9,
                         poster: '',
                         displayTime: "00:00",
-                        isFullScreen: false
-
+                        isFullScreen: false,
+                        isPage: false
                     }
                 }
+            }
+        },
+        vuex: {
+            getters: {
+                videoClips: state => state.videoClips,
             }
         },
         data() {
@@ -361,7 +460,8 @@
                         width: 0,
                     },
                     contrlLeft: 0
-                }
+                },
+                currentPage: 0
             }
         },
         mounted: function() {
@@ -441,15 +541,23 @@
                             this.state.playing = false
                             this.video.pos.current = 0
                             this.$video.currentTime = 0
+                            this.currentPage = 0;
+                            this.$video.pause();
                         });
                     } else {
-                        this.$video.pause()
+                        this.$video.pause();
                     }
                 }
             },
             timeline() {
                 const percent = this.$video.currentTime / this.$video.duration;
                 const x = this.video.pos.current;
+                for (let i in this.videoClips) {
+                    if (parseInt(this.$video.currentTime) >= this.videoClips[i] && (parseInt(this.$video.currentTime) < this.videoClips[parseInt(i) + 1] || this.videoClips[parseInt(i) + 1] == undefined)) {
+                        console.log(i);
+                        this.currentPage = parseInt(i);
+                    }
+                }
                 if (!this.video.moving) {
                     if (x >= 0 && x < this.video.pos.innerWidth - 16) {
                         this.video.pos.current = (this.video.pos.innerWidth * percent).toFixed(3);
@@ -460,7 +568,6 @@
                         this.video.contrlLeft = this.video.pos.innerWidth - 16;
                     }
                     this.video.displayTime = timeParse(this.$video.currentTime);
-
                     if (x < 25) {
                         this.video.contrlTimeLeft = 0;
                     } else if (x > this.video.pos.innerWidth - 25) {
@@ -469,11 +576,10 @@
                         this.video.contrlTimeLeft = this.video.pos.current - 16;
                     }
                 }
-
             },
             videoMove(e) {
-                this.initVideo()
-                this.video.moving = true
+                this.initVideo();
+                this.video.moving = true;
             },
             mouseMoveAction(e) {
                 if (this.video.moving) {
@@ -509,6 +615,7 @@
                 }
             },
             volMove() {
+                this.initVol();
                 this.vol.moving = true;
             },
             mouseMoveVol(e) {
@@ -523,10 +630,20 @@
                 let self = this;
                 if (self.vol.moving) {
                     const x = getMousePosition(e) - this.vol.pos.start;
+                    console.log("x", x);
                     if (x > 0 && x < self.vol.pos.innerWidth) {
+                        this.$video.muted = true;
+                        this.vol.muted = true;
                         self.vol.pos.current = x;
                         self.setVol(x / self.vol.pos.innerWidth);
                         self.vol.contrlLeft = self.vol.pos.current - 6;
+                        console.log(self.vol.contrlLeft);
+                    }
+                    if (x < 1) {
+                        self.vol.muted = 0;
+                        self.setVol(0);
+                        this.$video.muted = false;
+                        this.vol.muted = false;
                     }
                 }
             },
@@ -560,7 +677,6 @@
                     self.state.durationTime = timeParse(self.$video.duration);
                     self.state.durationStr = self.$video.duration;
                 })
-
                 self.$video.addEventListener("timeupdate", (e) => {
                         self.state.currentTime = timeParse(self.$video.currentTime);
                     })
@@ -569,7 +685,6 @@
                     if (self.$video.buffered.length > 0) {
                         self.video.loaded = (-1 + (self.$video.buffered.end(0) / self.$video.duration)) * 100
                     }
-
                 })
             },
             fullVideo() {
@@ -580,12 +695,57 @@
                 if (this.state.isFull) {
                     var de = that.$video;
                     this.state.isFull = true
-                    de.webkitRequestFullScreen()
+                        // de.webkitRequestFullScreen()
+                    that.enterFull(de);
                 } else {
                     this.state.isFull = false
-                    document.webkitCancelFullScreen()
+                        // document.webkitCancelFullScreen()
+                    that.exitFull();
                 }
-
+            },
+            enterFull(element) {
+                //此方法不可以在異步任務中執行，否則火狐無法全屏
+                if (element.requestFullscreen) {
+                    element.requestFullscreen();
+                } else if (element.mozRequestFullScreen) {
+                    element.mozRequestFullScreen();
+                } else if (element.msRequestFullscreen) {
+                    element.msRequestFullscreen();
+                } else if (element.oRequestFullscreen) {
+                    element.oRequestFullscreen();
+                } else if (element.webkitRequestFullscreen) {
+                    element.webkitRequestFullScreen();
+                } else {
+                    // var docHtml = document.documentElement;
+                    // var docBody = document.body;
+                    // var videobox = document.getElementById('videobox');
+                    // var cssText = 'width:100%;height:100%;overflow:hidden;';
+                    // docHtml.style.cssText = cssText;
+                    // docBody.style.cssText = cssText;
+                    // videobox.style.cssText = cssText + ';' + 'margin:0px;padding:0px;';
+                    // document.IsFullScreen = true;
+                }
+            },
+            exitFull() {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                } else if (document.msExitFullscreen) {
+                    document.msExitFullscreen();
+                } else if (document.mozCancelFullScreen) {
+                    document.mozCancelFullScreen();
+                } else if (document.oRequestFullscreen) {
+                    document.oCancelFullScreen();
+                } else if (document.webkitExitFullscreen) {
+                    document.webkitExitFullscreen();
+                } else {
+                    // var docHtml = document.documentElement;
+                    // var docBody = document.body;
+                    // var videobox = document.getElementById('videobox');
+                    // docHtml.style.cssText = "";
+                    // docBody.style.cssText = "";
+                    // videobox.style.cssText = "";
+                    // document.IsFullScreen = false;
+                }
             },
             keydown(event) {
                 let that = this;
@@ -600,9 +760,7 @@
                         that.play();
                         break;
                     default:
-
                 }
-
             },
             //鼠标移入video
             mouseEnterVideo: function() {
@@ -615,6 +773,7 @@
                 self.tmp.contrlHideTimer = setTimeout(() => {
                     self.state.showContrl = false;
                 }, 3000)
+                self.mouseMoveVideo()
             },
             // //鼠标移出video
             mouseLeaveVideo: function() {
@@ -623,6 +782,18 @@
                 self.vol.moving = false;
                 if (self.tmp.contrlHideTimer) {
                     clearTimeout(self.tmp.contrlHideTimer);
+                }
+                self.tmp.contrlHideTimer = setTimeout(() => {
+                    self.state.showContrl = false;
+                }, 500)
+            },
+            //鼠标晃动
+            mouseMoveVideo(event) {
+                let self = this;
+                self.state.showContrl = true;
+                if (self.tmp.contrlHideTimer) {
+                    clearTimeout(self.tmp.contrlHideTimer)
+                    self.tmp.contrlHideTimer = null
                 }
                 self.tmp.contrlHideTimer = setTimeout(() => {
                     self.state.showContrl = false;

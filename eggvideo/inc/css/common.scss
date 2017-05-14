@@ -1,0 +1,51 @@
+.topOuter{
+    width:1072px;
+    margin-left:200px;
+    padding-top:20px;
+}
+.verifyFilter {
+    margin-bottom: 20px;
+    overflow: hidden;
+    #articleInput{
+        width: 200px;
+        height: 22px;
+        border: 1px solid #d2d2d2;
+        border-radius: 4px;
+        outline: none;
+        padding: 0 2px;
+    }
+    #articleSearchBtn{
+        cursor: pointer;
+        margin-left: 20px;
+        height: 24px;
+        line-height: 24px;
+        font-size: 14px;
+        border-radius: 4px;
+        text-align: center;
+        width: 65px;
+        color: #ffffff;
+        background: #4b93df;
+        display: block;
+    }
+    .articleChannel{
+        width: 85px;
+        height: 22px;
+        border: 1px solid #d2d2d2;
+        border-radius: 4px;
+        outline: none;
+        margin-right: 20px;
+    }
+    #activityNew{
+        cursor: pointer;
+        margin-left: 20px;
+        height: 24px;
+        line-height: 24px;
+        font-size: 14px;
+        border-radius: 4px;
+        text-align: center;
+        width: 65px;
+        color: #ffffff;
+        background: #4b93df;
+        display: block;
+    }
+}
