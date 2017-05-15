@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div id="app">
         <h1>{{ msg }}</h1>
         <div class="container">
           <my-video id="myvideo" :sources="video.sources" :options="video.options"></my-video>
@@ -12,6 +12,7 @@
     import myVideo from './components/video.vue'
     import eggVideo from './components/eggvideo.vue'
     export default {
+        name: 'app',
         data() {
             return {
                 // note: changing this line won't causes changes
