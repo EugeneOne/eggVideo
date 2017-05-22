@@ -3,7 +3,7 @@
         <h1>{{ msg }}</h1>
         <div class="container">
           <my-video id="myvideo" :sources="video.sources" :options="video.options"></my-video>
-          <!-- <egg-video :parameter="eggvideo.parameter" :sources="eggvideo.sources"></egg-video> -->
+          <egg-video :parameter="eggvideo.parameter" :sources="eggvideo.sources"></egg-video>
       </div>
     </div>
 </template>
