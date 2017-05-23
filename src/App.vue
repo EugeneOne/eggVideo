@@ -2,40 +2,23 @@
     <div id="app">
         <h1>{{ msg }}</h1>
         <div class="container">
-          <my-video id="myvideo" :sources="video.sources" :options="video.options"></my-video>
-          <egg-video :parameter="eggvideo.parameter" :sources="eggvideo.sources"></egg-video>
+          <egg-video :parameter="eggvideo.parameter" :sources="eggvideo.sources" :options="eggvideo.options"></egg-video>
       </div>
     </div>
 </template>
 
 <script>
-    import myVideo from './components/video.vue'
     import eggVideo from './components/eggvideo.vue'
     export default {
         name: 'app',
         data() {
             return {
-                // note: changing this line won't causes changes
-                // with hot-reload because the reloaded component
-                // preserves its current state and we are modifying
-                // its initial state.
-                msg: 'Hello Vue!',
-                video: {
-                    sources: [{
-                        src: '../source/布莱克书店.花絮.Black.Books.S03.Extras.CN.DVDrip.720X400-YYeTs人人影视.mp4',
-                        type: 'video/mp4'
-                    }],
-                    options: {
-                        autoplay: true,
-                        volume: 0.6,
-                        poster: 'http://covteam.u.qiniudn.com/poster.png'
-                    }
-                },
+                msg: "eggVideo",
                 eggvideo: {
-                    // parameter: {
-                    //     height: "",
-                    //     width: ""
-                    // }
+                    parameter: {
+                        height: "300",
+                        width: "500"
+                    },
                     sources: [{
                         src: '../source/布莱克书店.花絮.Black.Books.S03.Extras.CN.DVDrip.720X400-YYeTs人人影视.mp4',
                         type: 'video/mp4'
@@ -43,13 +26,14 @@
                     options: {
                         autoplay: true,
                         volume: 0.6,
-                        poster: 'http://covteam.u.qiniudn.com/poster.png'
+                        displayTime: "00:00",
+                        poster: '',
+                        isFullScreen: true
                     }
                 }
             }
         },
         components: {
-            myVideo,
             eggVideo
         }
     }

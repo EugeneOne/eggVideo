@@ -48,14 +48,7 @@ module.exports = {
         historyApiFallback: true,
         noInfo: true
     },
-    plugins:[
-         new HtmlWebpackPlugin({           //根据模板插入css/js等生成最终HTML
-             filename:'../index.html',    //生成的html存放路径，相对于 path
-             template:'./src/components/index.html',    //html模板路径
-             inject:true,    //允许插件修改哪些内容，包括head与body
-             hash:true,    //为静态资源生成hash值
-        })
-    ],
+    
     devtool: '#eval-source-map'
 }
 

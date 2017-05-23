@@ -4,7 +4,7 @@
   "author": "wanyuqing <wanyuqing@baijiahulian.com>",
   "private": true,
   "scripts": {
-    "dev": "webpack-dev-server --port 9191 --inline --hot",
+    "dev": "webpack-dev-server --port 9191 --open --inline --hot",
     "build": "cross-env NODE_ENV=production webpack --progress --hide-modules"
   },
   "dependencies": {
