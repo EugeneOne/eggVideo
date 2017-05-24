@@ -25,8 +25,7 @@
                     }],
                     options: {
                         autoplay: true,
-                        volume: 0.6,
-                        displayTime: "00:00",
+                        volume: "0.6",
                         poster: '',
                         isFullScreen: true
                     }

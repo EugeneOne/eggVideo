@@ -1,3 +1,33 @@
+<!--
+翻页组件说明：
+使用方法：
+# 引入
+    import eggVideo from './CustomModal.vue';
+# 局部注册
+    components:{Page}
+# 调用
+<egg-video 
+    :parameter="parameter" 
+    :sources="sources" 
+    :options="options">
+</egg-video>
+
+> parameter : [object]
+  (选填) {
+      height [string] (播放器高度,默认348)
+      width [string] (播放器宽度,默认620)
+  }
+> sources : [Array]
+  (选填)
+    - src [string] (视频播放源)
+    - type [string] (播放类型)
+> options : [Object]
+  -  autoplay [bollean] (是否自动播放,默认true)
+  -  volume [string] (音量,默认0.6)
+  -  poster [string] (封面图片,默认无)
+  -  isFullScreen [bollean] (是否显示全屏按钮,默认false)
+ -->
+
 <template>
     <div class="container">
         <div class="video-container" :style="{height:parameter.height+'px' , width:parameter.width+'px'}" @mouseenter="mouseEnterVideo" @mouseleave="mouseLeaveVideo" @mousemove="mouseMoveVideo">
@@ -93,7 +123,6 @@
                         autoplay: true,
                         volume: 0.9,
                         poster: '',
-                        displayTime: "00:00",
                         isFullScreen: false
                     }
                 }
